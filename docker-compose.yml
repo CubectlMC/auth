@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: cubectl-auth-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: cubectl_identity
+      POSTGRES_USER: cubectl
+      POSTGRES_PASSWORD: cubectl
+    ports:
+      - "5432:5432"
+    volumes:
+      - cubectl_auth_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cubectl -d cubectl_identity"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  cubectl_auth_postgres_data:
