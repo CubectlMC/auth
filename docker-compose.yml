@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:17
+    image: postgres:18
     container_name: cubectl-auth-postgres
     restart: unless-stopped
     environment:
@@ -10,7 +10,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - cubectl_auth_postgres_data:/var/lib/postgresql/data
+      - cubectl_auth_postgres_data:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U cubectl -d cubectl_identity"]
       interval: 10s
