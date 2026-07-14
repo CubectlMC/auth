@@ -1,7 +1,8 @@
 package org.cubectl.identity.user
 
-import org.cubectl.identity.role.RoleController.RoleResponse
 import org.cubectl.identity.role.RoleRepository
+import org.cubectl.identity.role.dto.RoleResponse
+import org.cubectl.identity.user.dto.AddUserRoleRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -57,7 +58,4 @@ class UserRoleController(
         return ResponseEntity.noContent().build()
     }
 
-    data class AddUserRoleRequest(
-        val roleId: UUID,
-    )
 }

@@ -1,5 +1,6 @@
 package org.cubectl.identity.auth
 
+import org.cubectl.identity.auth.dto.TokenResponse
 import org.cubectl.identity.role.PermissionEntity
 import org.cubectl.identity.role.RoleRepository
 import org.cubectl.identity.user.UserEntity
@@ -68,10 +69,4 @@ class AuthService(
             .flatMap { role -> role.permissions }
             .map(PermissionEntity::code)
             .toSet()
-
-    data class TokenResponse(
-        val accessToken: String,
-        val refreshToken: String,
-        val tokenType: String,
-    )
 }

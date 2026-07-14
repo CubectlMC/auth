@@ -8,14 +8,27 @@ spring:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/cubectl_identity}
     username: ${SPRING_DATASOURCE_USERNAME:cubectl}
     password: ${SPRING_DATASOURCE_PASSWORD:cubectl}
-  flyway:
-    enabled: true
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.xml
   jackson:
     property-naming-strategy: SNAKE_CASE
   jpa:
     hibernate:
       ddl-auto: validate
     open-in-view: false
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+  packages-to-scan:
+    - org.cubectl.identity
+  open-api:
+    info:
+      title: Cubectl Auth API
+      version: v1
+      description: Identity, JWT authentication, users, roles and permissions API
 
 management:
   endpoints:

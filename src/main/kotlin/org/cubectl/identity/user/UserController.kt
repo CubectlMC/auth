@@ -1,7 +1,8 @@
 package org.cubectl.identity.user
 
 import jakarta.validation.Valid
-import jakarta.validation.constraints.Size
+import org.cubectl.identity.user.dto.UpdateUserRequest
+import org.cubectl.identity.user.dto.UserResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -54,20 +55,4 @@ class UserController(
         return ResponseEntity.noContent().build()
     }
 
-    data class UpdateUserRequest(
-        @field:Size(min = 3, max = 64)
-        val username: String?,
-        val status: UserStatus?,
-    )
-
-    data class UserResponse(
-        val id: UUID,
-        val username: String,
-        val status: UserStatus,
-    ) {
-        companion object {
-            fun from(user: UserEntity): UserResponse =
-                UserResponse(user.id, user.username, user.status)
-        }
-    }
 }

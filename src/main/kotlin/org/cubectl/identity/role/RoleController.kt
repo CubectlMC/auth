@@ -1,9 +1,9 @@
 package org.cubectl.identity.role
 
 import jakarta.validation.Valid
-import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.NotNull
-import jakarta.validation.constraints.Size
+import org.cubectl.identity.role.dto.CreateRoleRequest
+import org.cubectl.identity.role.dto.RoleResponse
+import org.cubectl.identity.role.dto.UpdateRoleRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -79,43 +79,4 @@ class RoleController(
         return permissions.toSet()
     }
 
-    data class CreateRoleRequest(
-        @field:NotBlank
-        @field:Size(max = 64)
-        val code: String,
-        @field:NotBlank
-        @field:Size(max = 128)
-        val displayName: String,
-        val description: String?,
-        @field:NotNull
-        val permissionCodes: Set<String>,
-    )
-
-    data class UpdateRoleRequest(
-        @field:NotBlank
-        @field:Size(max = 128)
-        val displayName: String,
-        val description: String?,
-        @field:NotNull
-        val permissionCodes: Set<String>,
-    )
-
-    data class RoleResponse(
-        val id: UUID,
-        val code: String,
-        val displayName: String,
-        val description: String?,
-        val permissionCodes: Set<String>,
-    ) {
-        companion object {
-            fun from(role: RoleEntity): RoleResponse =
-                RoleResponse(
-                    id = role.id,
-                    code = role.code,
-                    displayName = role.displayName,
-                    description = role.description,
-                    permissionCodes = role.permissions.map(PermissionEntity::code).toSet(),
-                )
-        }
-    }
 }

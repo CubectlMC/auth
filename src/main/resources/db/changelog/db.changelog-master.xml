@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="001-create-identity-schema" author="cubectl">
+        <createTable tableName="users">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="varchar(64)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password_hash" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="varchar(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_login_at" type="timestamp"/>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted_at" type="timestamp"/>
+        </createTable>
+
+        <createTable tableName="roles">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="code" type="varchar(64)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="varchar(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(255)"/>
+            <column name="system_role" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="permissions">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="code" type="varchar(128)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="description" type="varchar(255)"/>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="role_permissions">
+            <column name="role_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="permission_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="role_permissions" columnNames="role_id, permission_id"
+                       constraintName="pk_role_permissions"/>
+        <addForeignKeyConstraint baseTableName="role_permissions" baseColumnNames="role_id"
+                                 referencedTableName="roles" referencedColumnNames="id"
+                                 constraintName="fk_role_permissions_role"/>
+        <addForeignKeyConstraint baseTableName="role_permissions" baseColumnNames="permission_id"
+                                 referencedTableName="permissions" referencedColumnNames="id"
+                                 constraintName="fk_role_permissions_permission"/>
+
+        <createTable tableName="user_roles">
+            <column name="user_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assigned_by" type="uuid"/>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="user_roles" columnNames="user_id, role_id" constraintName="pk_user_roles"/>
+        <addForeignKeyConstraint baseTableName="user_roles" baseColumnNames="user_id"
+                                 referencedTableName="users" referencedColumnNames="id"
+                                 constraintName="fk_user_roles_user"/>
+        <addForeignKeyConstraint baseTableName="user_roles" baseColumnNames="role_id"
+                                 referencedTableName="roles" referencedColumnNames="id"
+                                 constraintName="fk_user_roles_role"/>
+
+        <createTable tableName="refresh_tokens">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="token_hash" type="varchar(128)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="expires_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revoked_at" type="timestamp"/>
+            <column name="created_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="refresh_tokens" baseColumnNames="user_id"
+                                 referencedTableName="users" referencedColumnNames="id"
+                                 constraintName="fk_refresh_tokens_user"/>
+
+        <createIndex tableName="users" indexName="users_status_idx">
+            <column name="status"/>
+        </createIndex>
+        <createIndex tableName="refresh_tokens" indexName="refresh_tokens_user_id_idx">
+            <column name="user_id"/>
+        </createIndex>
+        <createIndex tableName="refresh_tokens" indexName="refresh_tokens_expires_at_idx">
+            <column name="expires_at"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
